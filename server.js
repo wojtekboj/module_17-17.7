@@ -5,19 +5,19 @@ var config = require('./config');
 var app = express();
 var googleProfile = {};
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user);
 });
-passport.deserializeUser(function(obj, done) {
+passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
 passport.use(new GoogleStrategy({
         clientID: config.GOOGLE_CLIENT_ID,
-        clientSecret:config.GOOGLE_CLIENT_SECRET,
+        clientSecret: config.GOOGLE_CLIENT_SECRET,
         callbackURL: config.CALLBACK_URL
     },
-    function(accessToken, refreshToken, profile, cb) {
+    function (accessToken, refreshToken, profile, cb) {
         googleProfile = {
             id: profile.id,
             displayName: profile.displayName
@@ -32,21 +32,25 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //app routes
-app.get('/', function(req, res){
-    res.render('index', { user: req.user });
+app.get('/', function (req, res) {
+    res.render('index', {
+        user: req.user
+    });
 });
 
-app.get('/logged', function(req, res){
-    res.render('logged', { user: googleProfile });
+app.get('/logged', function (req, res) {
+    res.render('logged', {
+        user: googleProfile
+    });
 });
 //Passport routes
 app.get('/auth/google',
-passport.authenticate('google', {
-scope : ['profile', 'email']
-}));
+    passport.authenticate('google', {
+        scope: ['profile', 'email']
+    }));
 app.get('/auth/google/callback',
     passport.authenticate('google', {
-        successRedirect : '/logged',
+        successRedirect: '/logged',
         failureRedirect: '/'
     }));
 
